@@ -5,10 +5,9 @@ export const SearchForm = ({onInputSearchMovieChange, onSubmit}) => (
       <form onSubmit={onSubmit}>
           <label>Title</label>&nbsp;
           <input type="text"
-              id='uuid-input'
+              id='searchMovie'
               placeholder="Title of movie..."
               size="40"
-              //value={uuid}
               onChange={onInputSearchMovieChange}
           />
           <input type="submit" value="Search" />
