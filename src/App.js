@@ -30,16 +30,10 @@ class App extends Component {
       this.searchMovies("top+secret");
    }
 
-   handleInputSearchMovieChange(event) {
-       this.setState({
-           searchTitle: event.target.value
-       });
-   }
+   handleSearchMovieSubmit(title) {
+      console.log("title = ", title);
 
-   handleSearchMovieSubmit(event) {
-      event.preventDefault();
-
-      this.searchMovies(this.state.searchTitle);
+      this.searchMovies(title);
    }
 
    async searchMovies(title) {
@@ -84,7 +78,7 @@ class App extends Component {
                <h1 className="App-title">Movie search</h1>
             </header>
             <SearchForm
-               onInputSearchMovieChange={this.handleInputSearchMovieChange.bind(this)}
+               title="impossible"
                onSubmit={this.handleSearchMovieSubmit.bind(this)}
             />
             {
@@ -94,7 +88,6 @@ class App extends Component {
                this.state.movieJson !== '' ?
                   <div>
                      {listItems}
-                     {/*JSON.stringify(this.state.movieJson)*/}
                   </div>
                   :
                   <p className="App-intro">
