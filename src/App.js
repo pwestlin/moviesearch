@@ -27,19 +27,26 @@ class App extends Component {
 
    componentDidMount() {
       console.log("componentDidMount");
-      this.searchMovies("top+secret");
+      this.searchMovies({
+         title: "top+secret",
+      });
    }
 
-   handleSearchMovieSubmit(title) {
-      console.log("title = ", title);
+   handleSearchMovieSubmit(params) {
+      console.log("params = ", params);
+      console.log("params.title = ", params.title);
+      console.log("params.year = ", params.year);
 
-      this.searchMovies(title);
+      this.searchMovies(params);
    }
 
-   async searchMovies(title) {
+   async searchMovies(params) {
+      const {title, year} = params;
+
       console.log("title: ", title);
+      console.log("year: ", year);
       try {
-         const response = await fetch(`http://www.omdbapi.com/?apiKey=${this.state.omdbApiKey}&s=${title}`);
+         const response = await fetch(`http://www.omdbapi.com/?apiKey=${this.state.omdbApiKey}&s=${title}` + (year !== undefined ? `&y=${year}` : ''));
          const json = await response.json();
          console.log("json: ", json);
          this.setState({
@@ -78,7 +85,6 @@ class App extends Component {
                <h1 className="App-title">Movie search</h1>
             </header>
             <SearchForm
-               title="impossible"
                onSubmit={this.handleSearchMovieSubmit.bind(this)}
             />
             {
