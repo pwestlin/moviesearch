@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import logo from './movie.png';
 import './App.css';
-import SearchResult from "./SearchResult";
+import {SearchResult} from "./SearchResult";
 
 class App extends Component {
 
