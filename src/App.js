@@ -7,28 +7,33 @@ class App extends Component {
    constructor(props) {
       super(props);
 
-      if(process.env.REACT_APP_SECRET_OMDB_API_KEY === undefined) {
-         alert("You must set environment variable REACT_APP_SECRET_OMDB_API_KEY");
-      }
+      this.checkOmdbApiKey();
 
       this.state = {
          movieJson: '',
          omdbApiKey: process.env.REACT_APP_SECRET_OMDB_API_KEY
       };
-      console.log("omdbApiKey:", process.env.REACT_APP_SECRET_OMDB_API_KEY);
    }
+
+   checkOmdbApiKey() {
+      console.log("omdbApiKey:", process.env.REACT_APP_SECRET_OMDB_API_KEY);
+      if (process.env.REACT_APP_SECRET_OMDB_API_KEY === undefined) {
+         alert("You must set environment variable REACT_APP_SECRET_OMDB_API_KEY");
+      }
+   }
+
 
    componentDidMount() {
       console.log("componentDidMount");
-
       this.fetchMovie();
    }
 
    async fetchMovie() {
       try {
          //const response = await fetch(`http://www.omdbapi.com/?apiKey=${process.env.REACT_APP_SECRET_OMDB_API_KEY}&t=top+secret&y=1984`);
-         const response = await fetch(`http://www.omdbapi.com/?apiKey=${this.state.omdbApiKey}&t=top+secret&y=1984`);
+         const response = await fetch(`http://www.omdbapi.com/?apiKey=${this.state.omdbApiKey}&s=top+secret`);
          const json = await response.json();
+         console.log("json: ", json);
          this.setState({
             movieJson: json
          })
@@ -38,21 +43,20 @@ class App extends Component {
    }
 
    render() {
-/*
-      contacts: json.results.map(user => (
+      console.log("this.state.movieJson: ", this.state.movieJson);
+      const movies = this.state.movieJson !== '' ? this.state.movieJson.Search.map(movie => (
          {
-            name: `${user.name.first} ${user.name.last}`,
-            username: `${user.login.username}`,
-            email: `${user.email}`,
-            location: `${user.location.street}, ${user.location.city}`
+            title: `${movie.Title}`,
+            year: `${movie.Year}`,
+            imdbID: `${movie.imdbID}`,
+            type: `${movie.Type}`,
+            poster: `${movie.Poster}`,
          }
-      ))
-*/
-
-      const {Title, Year, Genre, Actors, Plot, Poster} = this.state.movieJson;
-      console.log("Title", Title);
-      console.log("Actors", Actors);
-      console.log("Poster", Poster);
+      )) : [];
+      console.log("movies", movies);
+      //const listItems = movies.map((movie) => <li key={movie.title}>{movie.title}</li>);
+      movies.sort((m1, m2) => m1.year < m2.year);
+      const listItems = movies.map((movie) => <p key={movie.imdbID}>{movie.title} ({movie.year})</p>);
       return (
          <div className="App">
             <header className="App-header">
@@ -62,14 +66,8 @@ class App extends Component {
             {
                this.state.movieJson !== '' ?
                   <div>
+                     {listItems}
                      {/*JSON.stringify(this.state.movieJson)*/}
-                     <p>Filmen</p>
-                     <p>Titel: {Title}</p>
-                     <p>År: {Year}</p>
-                     <p>Genrer: {Genre}</p>
-                     <p>Skådisar: {Actors}</p>
-                     <p>Handling: {Plot}</p>
-                     <img src={Poster} alt="Bild saknas"/>
                   </div>
                   :
                   <p className="App-intro">
