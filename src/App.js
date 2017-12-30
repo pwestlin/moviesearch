@@ -31,7 +31,6 @@ class App extends Component {
 
    async fetchMovie() {
       try {
-         //const response = await fetch(`http://www.omdbapi.com/?apiKey=${process.env.REACT_APP_SECRET_OMDB_API_KEY}&t=top+secret&y=1984`);
          const response = await fetch(`http://www.omdbapi.com/?apiKey=${this.state.omdbApiKey}&s=top+secret`);
          const json = await response.json();
          console.log("json: ", json);
@@ -55,7 +54,6 @@ class App extends Component {
          }
       )) : [];
       console.log("movies", movies);
-      //const listItems = movies.map((movie) => <li key={movie.title}>{movie.title}</li>);
       movies.sort((m1, m2) => m1.year < m2.year);
       const listItems = movies.map((movie) => <SearchResult key={movie.imdbID} movie={movie} />);
       return (
