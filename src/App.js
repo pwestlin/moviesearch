@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import logo from './movie.png';
 import './App.css';
 import {SearchResult} from "./SearchResult";
+import {SearchForm} from "./SearchForm";
 
 class App extends Component {
 
@@ -26,12 +27,25 @@ class App extends Component {
 
    componentDidMount() {
       console.log("componentDidMount");
-      this.fetchMovie();
+      this.searchMovies("top+secret");
    }
 
-   async fetchMovie() {
+   handleInputSearchMovieChange(event) {
+       this.setState({
+           searchTitle: event.target.value
+       });
+   }
+
+   handleSearchMovieSubmit(event) {
+      event.preventDefault();
+
+      this.searchMovies(this.state.searchTitle);
+   }
+
+   async searchMovies(title) {
+      console.log("title: ", title);
       try {
-         const response = await fetch(`http://www.omdbapi.com/?apiKey=${this.state.omdbApiKey}&s=top+secret`);
+         const response = await fetch(`http://www.omdbapi.com/?apiKey=${this.state.omdbApiKey}&s=${title}`);
          const json = await response.json();
          console.log("json: ", json);
          this.setState({
@@ -44,24 +58,38 @@ class App extends Component {
 
    render() {
       console.log("this.state.movieJson: ", this.state.movieJson);
-      const movies = this.state.movieJson !== '' ? this.state.movieJson.Search.map(movie => (
-         {
-            title: `${movie.Title}`,
-            year: `${movie.Year}`,
-            imdbID: `${movie.imdbID}`,
-            type: `${movie.Type}`,
-            poster: `${movie.Poster}`,
-         }
-      )) : [];
+
+      console.log("this.state.movieJson.Response = " + this.state.movieJson.Response);
+
+      let movies = [];
+      if(this.state.movieJson.Response === "True") {
+         movies = this.state.movieJson.Search.map(movie => (
+            {
+               title: `${movie.Title}`,
+               year: `${movie.Year}`,
+               imdbID: `${movie.imdbID}`,
+               type: `${movie.Type}`,
+               poster: `${movie.Poster}`,
+            }
+         ));
+         movies.sort((m1, m2) => m1.year < m2.year);
+      }
+
       console.log("movies", movies);
-      movies.sort((m1, m2) => m1.year < m2.year);
-      const listItems = movies.map((movie) => <SearchResult key={movie.imdbID} movie={movie} />);
+      const listItems = movies.map((movie) => <SearchResult key={movie.imdbID} movie={movie}/>);
       return (
          <div className="App">
             <header className="App-header">
                <img src={logo} className="App-logo" alt="logo"/>
                <h1 className="App-title">Movie search</h1>
             </header>
+            <SearchForm
+               onInputSearchMovieChange={this.handleInputSearchMovieChange.bind(this)}
+               onSubmit={this.handleSearchMovieSubmit.bind(this)}
+            />
+            {
+               this.state.movieJson.Response !== "True" && <div>No movies found</div>
+            }
             {
                this.state.movieJson !== '' ?
                   <div>
