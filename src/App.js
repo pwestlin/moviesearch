@@ -57,7 +57,7 @@ class App extends Component {
       console.log("movies", movies);
       //const listItems = movies.map((movie) => <li key={movie.title}>{movie.title}</li>);
       movies.sort((m1, m2) => m1.year < m2.year);
-      const listItems = movies.map((movie) => <SearchResult movie={movie} />);
+      const listItems = movies.map((movie) => <SearchResult key={movie.imdbID} movie={movie} />);
       return (
          <div className="App">
             <header className="App-header">
