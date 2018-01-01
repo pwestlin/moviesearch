@@ -3,6 +3,7 @@ import logo from './movie.png';
 import './App.css';
 import {SearchResult} from "./SearchResult";
 import {SearchForm} from "./SearchForm";
+import {ShowMovie} from "./ShowMovie";
 
 class App extends Component {
 
@@ -12,6 +13,7 @@ class App extends Component {
       this.checkOmdbApiKey();
 
       this.state = {
+         searchedMoviesJson: '',
          movieJson: '',
       };
    }
@@ -36,6 +38,26 @@ class App extends Component {
       this.searchMovies(params);
    }
 
+   showMovie(omdbID) {
+      this.fetchMovie(omdbID);
+   }
+
+   async fetchMovie(omdbID) {
+      console.log("omdbID = ", omdbID);
+
+      try {
+         const response = await fetch(`http://www.omdbapi.com/?apiKey=${process.env.REACT_APP_SECRET_OMDB_API_KEY}&i=${omdbID}`);
+         const json = await response.json();
+         console.log("json: ", json);
+         this.setState({
+            movieJson: json,
+            searchedMoviesJson: ''
+         })
+      } catch (error) {
+         console.error("Error fetching movie info: ", error)
+      }
+   }
+
    async searchMovies(params) {
       const {title, year} = params;
 
@@ -46,21 +68,22 @@ class App extends Component {
          const json = await response.json();
          console.log("json: ", json);
          this.setState({
-            movieJson: json
+            searchedMoviesJson: json,
+            movieJson: '',
          })
       } catch (error) {
-         console.error("Fel vid hätmtning av film: ", error)
+         console.error("Error searching for movies: ", error)
       }
    }
 
    render() {
-      console.log("this.state.movieJson: ", this.state.movieJson);
+      console.log("this.state.searchedMoviesJson: ", this.state.searchedMoviesJson);
 
-      console.log("this.state.movieJson.Response = " + this.state.movieJson.Response);
+      console.log("this.state.searchedMoviesJson.Response = " + this.state.searchedMoviesJson.Response);
 
       let movies = [];
-      if(this.state.movieJson.Response === "True") {
-         movies = this.state.movieJson.Search.map(movie => (
+      if (this.state.searchedMoviesJson.Response === "True") {
+         movies = this.state.searchedMoviesJson.Search.map(movie => (
             {
                title: `${movie.Title}`,
                year: `${movie.Year}`,
@@ -72,8 +95,11 @@ class App extends Component {
          movies.sort((m1, m2) => m1.year < m2.year);
       }
 
+      const movie = this.state.movieJson.Response === "True" ? this.state.movieJson : null;
+
       console.log("movies", movies);
-      const listItems = movies.map((movie) => <SearchResult key={movie.imdbID} movie={movie}/>);
+      const listItems = movies.map((movie) => <SearchResult key={movie.imdbID} movie={movie}
+                                                            handleClick={this.showMovie.bind(this)}/>);
       return (
          <div className="App">
             <header className="App-header">
@@ -84,17 +110,17 @@ class App extends Component {
                onSubmit={this.handleSearchMovieSubmit.bind(this)}
             />
             {
-               this.state.movieJson.Response !== "True" && <div>No movies found</div>
+               movie && <ShowMovie movie={movie} />
             }
             {
-               this.state.movieJson !== '' ?
+               this.state.searchedMoviesJson !== '' && this.state.searchedMoviesJson.Response !== "True" && <div>No movies found</div>
+            }
+            {
+               this.state.searchedMoviesJson !== '' ?
                   <div>
                      {listItems}
                   </div>
-                  :
-                  <p className="App-intro">
-                     Ingen film
-                  </p>
+                  : ''
             }
          </div>
       );

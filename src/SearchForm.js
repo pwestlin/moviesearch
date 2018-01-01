@@ -39,7 +39,7 @@ export class SearchForm extends Component {
       return (
          <div className="SearchForm">
             <form onSubmit={this.handleSubmit}>
-               <label>Title</label>
+               <label>Title</label>&nbsp;
                <input type="text"
                       name="title"
                       placeholder="Title of movie..."
@@ -47,7 +47,7 @@ export class SearchForm extends Component {
                       value={this.state.title} onChange={this.handleChange}
                />
                <br/>
-               <label>Year</label>
+               <label>Year</label>&nbsp;
                <input type="text"
                       name="year"
                       placeholder="Year of movie..."

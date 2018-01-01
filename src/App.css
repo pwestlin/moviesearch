@@ -36,6 +36,10 @@
 }
 
 .SearchForm {
+   text-align: left;
+
    margin-top: 30px;
    margin-bottom: 30px;
+
+   margin-left: 100px;
 }
