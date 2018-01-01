@@ -13,20 +13,16 @@ class App extends Component {
 
       this.state = {
          movieJson: '',
-         omdbApiKey: process.env.REACT_APP_SECRET_OMDB_API_KEY
       };
    }
 
    checkOmdbApiKey() {
-      console.log("omdbApiKey:", process.env.REACT_APP_SECRET_OMDB_API_KEY);
       if (process.env.REACT_APP_SECRET_OMDB_API_KEY === undefined) {
-         alert("You must set environment variable REACT_APP_SECRET_OMDB_API_KEY");
+         alert("Missing environment variable REACT_APP_SECRET_OMDB_API_KEY");
       }
    }
 
-
    componentDidMount() {
-      console.log("componentDidMount");
       this.searchMovies({
          title: "top+secret",
       });
@@ -46,7 +42,7 @@ class App extends Component {
       console.log("title: ", title);
       console.log("year: ", year);
       try {
-         const response = await fetch(`http://www.omdbapi.com/?apiKey=${this.state.omdbApiKey}&s=${title}` + (year !== undefined ? `&y=${year}` : ''));
+         const response = await fetch(`http://www.omdbapi.com/?apiKey=${process.env.REACT_APP_SECRET_OMDB_API_KEY}&s=${title}` + (year !== undefined ? `&y=${year}` : ''));
          const json = await response.json();
          console.log("json: ", json);
          this.setState({
