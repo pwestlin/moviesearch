@@ -54,6 +54,7 @@ export class SearchForm extends Component {
                       size="4"
                       value={this.state.year} onChange={this.handleChange}
                />
+               <br/>
                <input type="submit" value="Search"/>
             </form>
          </div>
